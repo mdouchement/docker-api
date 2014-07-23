@@ -21,3 +21,7 @@ image 'ubuntu:13.10' do
   image = Docker::Image.create('fromImage' => 'ubuntu', 'tag' => '13.10')
   puts "Pulled ubuntu:13.10, image id: #{image.id}"
 end
+
+task :console do
+  exec 'bundle exec pry -r docker -I ./lib'
+end
