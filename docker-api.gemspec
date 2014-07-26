@@ -25,4 +25,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'vcr', '>= 2.7.0'
   gem.add_development_dependency 'simplecov'
   gem.add_development_dependency 'webmock'
+  gem.add_development_dependency 'rubocop', '0.20.0'
 end

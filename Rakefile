@@ -25,3 +25,10 @@ end
 task :console do
   exec 'bundle exec pry -r docker -I ./lib'
 end
+
+# TODO: Remove this fake task
+task :testing do
+  require 'docker/testing'
+  container = Docker::Container.create({ 'name' => 'The_name', 'Image' => 'ubuntu:trusty', 'Hostname' => 'container-host', 'Cmd' => ['/bin/echo', 'the echo sentence'] })
+  require 'pry'; binding.pry
+end
