@@ -2,7 +2,7 @@ module Docker
   module Testing
     class ContainerManager
       def perform(http_method, path, query, opts, &block)
-        puts "query: #{ query }, opts: #{ opts }"
+        puts "http_method: #{ http_method }, path: #{ path }, query: #{ query }, opts: #{ opts }"
 
         # /containers/5453685454/start => ['containers, '5453685454', 'start']
         splits = path.split('/')[1..-1]
@@ -39,6 +39,11 @@ module Docker
 
       # start container
       def post_start_with_id(id, query, opts)
+        if stoped_containers[id]
+          containers[id] = stoped_containers.delete(id)
+          containers[id].state('FinishedAt' => '0001-01-01T00:00:00Z')
+        end
+
         containers[id].tap do |container|
           container.define_pulic_ports(opts[:body].delete('PortBindings'))
           container.host_config(opts[:body])
@@ -49,6 +54,8 @@ module Docker
 
       # stop container
       def post_stop_with_id(id, query, opts)
+        return response(id) unless containers[id]
+
         containers[id].tap do |container|
           container.host_config(opts[:body])
           container.state('FinishedAt' => Testing.time_now, 'Running' => false)
@@ -62,10 +69,32 @@ module Docker
         # restart have no options
         opts = { body: {} }
 
-        post_stop_with_id(id, query, opts)
-        containers[id] = stoped_containers.delete(id)
-        containers[id].state('FinishedAt' => '0001-01-01T00:00:00Z')
-        post_start_with_id(id, query, opts)
+        post_stop_with_id(id, query, opts) if containers[id]
+
+        if stoped_containers[id]
+          post_start_with_id(id, query, opts)
+        else
+          raise Error::NotFoundError,
+                'Expected(200..204) <=> Actual(404 Not Found) (Docker::Error::NotFoundError)'
+        end
+
+        response(id)
+      end
+
+      # pause container
+      def post_pause_with_id(id, query, opts)
+        containers[id].tap do |container|
+          container.state('Paused' => true)
+        end
+
+        response(id)
+      end
+
+      # unpause container
+      def post_unpause_with_id(id, query, opts)
+        containers[id].tap do |container|
+          container.state('Paused' => false)
+        end
 
         response(id)
       end
@@ -118,11 +147,13 @@ module Docker
         short_id = id[0..12]
 
         if containers.key?(short_id)
-          fail 'Expected(200..204) <=> Actual(406 Not Acceptable) (Excon::Errors::NotAcceptable)'
+          raise NotAcceptable,
+                'Expected(200..204) <=> Actual(406 Not Acceptable) (Excon::Errors::NotAcceptable)'
         end
 
         unless stoped_containers.key?(short_id)
-          fail 'Expected(200..204) <=> Actual(404 Not Found) (Docker::Error::NotFoundError)'
+          raise NotFoundError,
+                'Expected(200..204) <=> Actual(404 Not Found) (Docker::Error::NotFoundError)'
         end
 
         stoped_containers.delete(short_id)

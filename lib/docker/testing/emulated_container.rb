@@ -15,10 +15,12 @@ module Docker
       end
 
       def state(state)
+        return if state.nil?
         @template['State'].merge!(state)
       end
 
       def host_config(host_config)
+        return if host_config.nil?
         @template['HostConfig'].merge!(host_config)
       end
 
