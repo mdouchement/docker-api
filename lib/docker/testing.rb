@@ -3,7 +3,7 @@ require 'json'
 require 'docker'
 require 'docker/testing/connection'
 require 'docker/testing/container_manager'
-require 'docker/testing/container_template'
+require 'docker/testing/emulated_container'
 
 module Docker
   module Testing
