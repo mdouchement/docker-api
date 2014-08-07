@@ -28,7 +28,7 @@ module Docker
 
       # Define all port bindings
       def define_pulic_ports(port_bindings = {})
-        return if port_bindings.empty?
+        return if port_bindings.nil? || port_bindings.empty?
 
         @template['HostConfig']['PortBindings'] = {}.tap do |pbindings|
           # Init
@@ -88,7 +88,7 @@ module Docker
       #
       # Updates NetworkSettings -> Ports values
       def define_private_ports(port_specs = [])
-        return if port_specs.empty?
+        return if port_specs.nil? || port_specs.empty?
 
         @template['Config']['ExposedPorts'] = {}.tap do |eports|
           port_specs.each do |port|

@@ -57,6 +57,19 @@ module Docker
         response(id)
       end
 
+      # restart container
+      def post_restart_with_id(id, query, opts)
+        # restart have no options
+        opts = { body: {} }
+
+        post_stop_with_id(id, query, opts)
+        containers[id] = stoped_containers.delete(id)
+        containers[id].state('FinishedAt' => '0001-01-01T00:00:00Z')
+        post_start_with_id(id, query, opts)
+
+        response(id)
+      end
+
       # kill container
       def post_kill_with_id(id, query, opts)
         containers[id].tap do |container|
