@@ -152,17 +152,32 @@ module Docker
         end
       end
 
+      # container's logs
+      def get_logs_with_id(*args)
+        fail 'Not implemented yet'
+      end
+
+      # container's changes
+      def get_changes_with_id(*args)
+        fail 'Not implemented yet'
+      end
+
+      # export container
+      def get_changes_with_id(*args)
+        fail 'Unsupported'
+      end
+
       # remove container
       def post_remove(id)
         short_id = id[0..12]
 
         if containers.key?(short_id)
-          raise NotAcceptable,
+          fail NotAcceptable,
                 'Expected(200..204) <=> Actual(406 Not Acceptable) (Excon::Errors::NotAcceptable)'
         end
 
         unless stoped_containers.key?(short_id)
-          raise NotFoundError,
+          fail NotFoundError,
                 'Expected(200..204) <=> Actual(404 Not Found) (Docker::Error::NotFoundError)'
         end
 
