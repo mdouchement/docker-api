@@ -14,6 +14,36 @@ module Docker
         at_create_time(query, opts[:body])
       end
 
+      def user
+        user = @template['Config']['User']
+        user.empty? ? 'root' : user
+      end
+
+      def pid
+        @template['State']['Pid']
+      end
+
+      def ppid
+        @ppid ||= SecureRandom.random_number(80_000)
+      end
+
+      def tty_name
+        @template['Config']['Tty'] ? 'pts/6' : '?'
+      end
+
+      def define_pid
+        @template['State']['Pid'] = SecureRandom.random_number(80_000)
+      end
+
+      def command
+        # Space escaping
+        args = @template['Args'].map do |arg|
+          "'#{ arg }'" if arg.include?(' ')
+        end
+
+        "#{ @template['Path'] } #{ args.join(' ') }"
+      end
+
       def state(state)
         return if state.nil?
         @template['State'].merge!(state)
