@@ -15,7 +15,7 @@ module Docker
               'Cpuset' => '',
               'Domainname' => '',
               'Entrypoint' => nil,
-              'Env' => ['HOME=/',  'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'],
+              'Env' => ['HOME=/', 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'],
               'ExposedPorts' => nil,
               'Hostname' => SecureRandom.hex(6),
               'Image' => '',
