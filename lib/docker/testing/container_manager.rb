@@ -2,7 +2,7 @@ module Docker
   module Testing
     class ContainerManager
       def perform(http_method, path, query, opts, &block)
-        puts "http_method: #{ http_method }, path: #{ path }, query: #{ query }, opts: #{ opts }"
+        #puts "http_method: #{ http_method }, path: #{ path }, query: #{ query }, opts: #{ opts }"
 
         # /containers/5453685454/start => ['containers, '5453685454', 'start']
         splits = path.split('/')[1..-1]
@@ -152,18 +152,33 @@ module Docker
         end
       end
 
+      # wait container
+      def get_wait_with_id(*args)
+        { 'StatusCode' => 0 }
+      end
+
       # container's logs
       def get_logs_with_id(*args)
-        fail 'Not implemented yet'
+        fail 'Unsupported'
       end
 
       # container's changes
       def get_changes_with_id(*args)
-        fail 'Not implemented yet'
+        fail 'Unsupported'
+      end
+
+      # container's changes
+      def get_copy_with_id(*args)
+        fail 'Unsupported'
       end
 
       # export container
       def get_changes_with_id(*args)
+        fail 'Unsupported'
+      end
+
+      # attach container
+      def get_attach_with_id(*args)
         fail 'Unsupported'
       end
 
